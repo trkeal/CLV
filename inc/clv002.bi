@@ -29,9 +29,9 @@
 
     declare sub clv_buffer_ini(clv_buffer(any,any) as fb.image ptr, Screen_Width as integer, Screen_Height as integer)
 
-    declare sub clv_font_load (clv_font() as fb.image ptr, FontIndex as integer, Switch as integer, Filename as string)
+    declare sub clv_font_load (clv_font(any) as fb.image ptr, FontIndex as integer, Switch as integer, Filename as string)
 
-    declare sub clv_draw_text (clv_buffer(any,any) as fb.image ptr, clv_font() as fb.image ptr, PageIndex as integer, clv_glyph() as integer, X as integer, Y as integer, Value as string)
+    declare sub clv_draw_text (clv_buffer(any,any) as fb.image ptr, clv_font(any) as fb.image ptr, PageIndex as integer, clv_glyph(any,any) as integer, X as integer, Y as integer, Value as string)
 
     declare sub clv_buffer_cls(clv_buffer(any,any) as fb.image ptr, PageIndex as integer)
     
@@ -55,7 +55,7 @@
     
 	declare function clv_math_vector2decimal (X1 as double, Y1 as double, X2 as double, Y2 as double) as double
     
-	declare function clv_argb32_mix(argb32() as uinteger, weight() as double) as uinteger
+	declare function clv_argb32_mix(argb32(any) as uinteger, weight(any) as double) as uinteger
     
 	redim shared as integer clv_glyph(&H00 to &HFF, 0 to 1)
     redim shared as fb.image ptr clv_font(&H00 to &HFF), clv_buffer(0 to 15, 0 to 1)
