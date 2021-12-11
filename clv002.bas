@@ -16,9 +16,7 @@
 
 ScreenRes 320, 200, 8, 16
 ScreenSet 1, 0
-	
-	dim shared as integer clv_buffer_focus
-    
+	    
 	const clv_math_Pi = 4 * ATN(1)
 	'[..]'const clv_math_Pi = 3.141592653589793#
     const clv_flag_and=&HFFFFFFFF, clv_flag_or=&H00000000
@@ -26,9 +24,14 @@ ScreenSet 1, 0
     const clv_flag_default=0, clv_flag_b=1, clv_flag_bf=2
     const clv_font_default=0
     const clv_font_flag_load=1, clv_font_flag_destroy=2
-	
+
+	dim shared as integer clv_buffer_focus
+
 	redim shared clv_buffer( 0 to 16, 0 to 1 ) as fb.image ptr
-	    
+	
+	redim shared as integer clv_glyph(&H00 to &HFF, 0 to 1)
+    redim shared as fb.image ptr clv_font(&H00 to &HFF), clv_buffer(0 to 15, 0 to 1)
+
 	declare sub clv_buffer_ini_all( clv_buffer(any,any) as fb.image ptr)
 
 	declare sub clv_buffer_ini(clv_buffer(any,any) as fb.image ptr, Screen_Width as integer, Screen_Height as integer)
@@ -184,8 +187,6 @@ sub clv_draw_image(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X 
     put clv_buffer(PageIndex, 1), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, clv_flag_and
     put clv_buffer(PageIndex, 1), (X, Y), ColorGraphic, custom, @clv_filter_mask, clv_flag_or
 end sub
-
-'[!]'Function checkered_blend( ByVal src As ulong, ByVal dest As ulong, ByVal param As Any Ptr ) As ulong
 
 function clv_filter_mask( byval SRC as ulong, byval DST as ulong, byval PARM as any ptr) as ulong   
     dim as ulong ptr parm32 = cast(ulong ptr, PARM)
