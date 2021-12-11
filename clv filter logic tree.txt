@@ -1,0 +1,32 @@
+
+clv_filter_mask =
+	(
+			(
+					SRC
+				and
+					DST
+			)
+		and
+			not
+			(
+					parm32
+				xor
+					clv_flag_and
+			)
+	)
+or
+	(
+			(
+					SRC
+				or
+					DST
+			)
+		and
+			not
+			(
+					parm32
+				xor
+					clv_flag_or
+			)
+	)
+	

@@ -1,5 +1,2 @@
-clv002.bas(132) warning 1(2): Passing scalar as pointer, at parameter 14
-clv002.bas(134) warning 1(2): Passing scalar as pointer, at parameter 14
-clv002.bas(185) warning 1(2): Passing scalar as pointer, at parameter 14
-clv002.bas(187) warning 1(2): Passing scalar as pointer, at parameter 14
-clv002.bas(193) error 20: Type mismatch, found ')' in 'clv_filter_mask = ((SRC and DST) and not(parm32 xor clv_flag_and)) or ((SRC or DST) and not(parm32 xor clv_flag_or))'
+clv002.bas(136) warning 1(2): Passing scalar as pointer, at parameter 14
+clv002.bas(189) warning 1(2): Passing scalar as pointer, at parameter 14

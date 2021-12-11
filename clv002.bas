@@ -19,7 +19,8 @@ ScreenSet 1, 0
 	    
 	const clv_math_Pi = 4 * ATN(1)
 	'[..]'const clv_math_Pi = 3.141592653589793#
-    const clv_flag_and=&HFFFFFFFF, clv_flag_or=&H00000000
+    const clv_flag_and=0, clv_flag_or=1
+    const clv_buffer_and=0, clv_buffer_or=1
     const clv_buffer_visible=0, clv_buffer_draw=1
     const clv_flag_default=0, clv_flag_b=1, clv_flag_bf=2
     const clv_font_default=0
@@ -71,8 +72,8 @@ ScreenSet 1, 0
 sub clv_buffer_ini(clv_buffer(any,any) as fb.image ptr, Screen_Width as integer, Screen_Height as integer)
     dim as integer PageIndex
     for PageIndex = lbound(clv_buffer, 1) to ubound(clv_buffer, 1)
-        clv_buffer(PageIndex, 0) = imagecreate(Screen_Width, Screen_Height)
-        clv_buffer(PageIndex, 1) = imagecreate(Screen_Width, Screen_Height)
+        clv_buffer(PageIndex, clv_buffer_and) = imagecreate(Screen_Width, Screen_Height)
+        clv_buffer(PageIndex, clv_buffer_or) = imagecreate(Screen_Width, Screen_Height)
         clv_buffer_cls clv_buffer(), PageIndex
     next
 end sub
@@ -118,33 +119,33 @@ sub clv_draw_text (clv_buffer(any,any) as fb.image ptr, clv_font(any) as fb.imag
 end sub
 
 sub clv_buffer_cls(clv_buffer(any,any) as fb.image ptr, PageIndex as integer)
-    line clv_buffer(PageIndex, 0), (0, 0) - (clv_buffer(PageIndex, 0) -> width - 1, clv_buffer(PageIndex, 0) -> height - 1), rgb(255, 255, 255), bf
-    line clv_buffer(PageIndex, 1), (0, 0) - (clv_buffer(PageIndex, 1) -> width - 1, clv_buffer(PageIndex, 1) -> height - 1), rgb(0, 0, 0), bf
+    line clv_buffer(PageIndex, clv_buffer_and), (0, 0) - (clv_buffer(PageIndex, clv_buffer_and) -> width - 1, clv_buffer(PageIndex, clv_buffer_and) -> height - 1), rgb(255, 255, 255), bf
+    line clv_buffer(PageIndex, clv_buffer_or), (0, 0) - (clv_buffer(PageIndex, clv_buffer_or) -> width - 1, clv_buffer(PageIndex, clv_buffer_or) -> height - 1), rgb(0, 0, 0), bf
 end sub
 
 sub clv_buffer_copy(clv_buffer(any,any) as fb.image ptr, SrcIndex as integer, DestIndex as integer)
-    put clv_buffer(DestIndex, 0), (0, 0), clv_buffer(SrcIndex, 0), pset
-    put clv_buffer(DestIndex, 1), (0, 0), clv_buffer(SrcIndex, 1), pset
+    put clv_buffer(DestIndex, clv_buffer_and), (0, 0), clv_buffer(SrcIndex, clv_buffer_and), pset
+    put clv_buffer(DestIndex, clv_buffer_or), (0, 0), clv_buffer(SrcIndex, clv_buffer_or), pset
 end sub
 
 sub clv_buffer_overlay(clv_buffer(any,any) as fb.image ptr, SrcIndex as integer, DestIndex as integer)
     'transparency layer
-    put clv_buffer(DestIndex, 0), (0, 0), clv_buffer(SrcIndex, 0), custom, @clv_filter_mask, clv_flag_and
+    put clv_buffer(DestIndex, clv_buffer_and), (0, 0), clv_buffer(SrcIndex, clv_buffer_and), custom, @clv_filter_mask, clv_flag_and
     'color layer
-    put clv_buffer(DestIndex, 1), (0, 0), clv_buffer(SrcIndex, 0), custom, @clv_filter_mask, clv_flag_and
-    put clv_buffer(DestIndex, 1), (0, 0), clv_buffer(SrcIndex, 1), custom, @clv_filter_mask, clv_flag_or
+    put clv_buffer(DestIndex, clv_buffer_or), (0, 0), clv_buffer(SrcIndex, clv_buffer_and), custom, @clv_filter_mask, clv_flag_and
+    put clv_buffer(DestIndex, clv_buffer_or), (0, 0), clv_buffer(SrcIndex, clv_buffer_or), custom, @clv_filter_mask, clv_flag_or
 end sub
 
 sub clv_buffer_flip(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, Display_Width as integer, Display_Height as integer)
     dim as integer X, Y, Px, Py
     dim as fb.image ptr Buffer
-    Buffer = imagecreate(Display_Width, clv_buffer(PageIndex, 1) -> height)
+    Buffer = imagecreate(Display_Width, clv_buffer(PageIndex, clv_buffer_or) -> height)
     for Px = 0 to Buffer -> width - 1
-        X = fix(Px * clv_buffer(PageIndex, 0) -> width / Buffer -> width)
-        put Buffer, (Px, 0), clv_buffer(PageIndex, 1), (X, 0) - (X, clv_buffer(PageIndex, 1) -> height - 1), pset
+        X = fix(Px * clv_buffer(PageIndex, clv_buffer_and) -> width / Buffer -> width)
+        put Buffer, (Px, 0), clv_buffer(PageIndex, clv_buffer_or), (X, 0) - (X, clv_buffer(PageIndex, clv_buffer_or) -> height - 1), pset
     next
     for Py = 0 to Display_height - 1
-        Y = fix(Py * clv_buffer(PageIndex, 0) -> height / Display_Height)
+        Y = fix(Py * clv_buffer(PageIndex, clv_buffer_and) -> height / Display_Height)
         put (0, Py), Buffer, (0,Y) - (Buffer -> width - 1, Y), pset
     next
     imagedestroy Buffer
@@ -153,21 +154,21 @@ end sub
 sub clv_draw_line(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X1 as integer, Y1 as integer, X2 as integer, Y2 as integer, ColorMask as ulong, TransparencyMask as ulong, clv_flag_method as integer)
     select case clv_flag_method
     case clv_flag_default
-        line clv_buffer(PageIndex, 0), (X1, Y1) - (X2, Y2), TransparencyMask
-        line clv_buffer(PageIndex, 1), (X1, Y1) - (X2, Y2), ColorMask
+        line clv_buffer(PageIndex, clv_buffer_and), (X1, Y1) - (X2, Y2), TransparencyMask
+        line clv_buffer(PageIndex, clv_buffer_or), (X1, Y1) - (X2, Y2), ColorMask
     case clv_flag_b
-        line clv_buffer(PageIndex, 0), (X1, Y1) - (X2, Y2), TransparencyMask, b
-        line clv_buffer(PageIndex, 1), (X1, Y1) - (X2, Y2), ColorMask, b
+        line clv_buffer(PageIndex, clv_buffer_and), (X1, Y1) - (X2, Y2), TransparencyMask, b
+        line clv_buffer(PageIndex, clv_buffer_or), (X1, Y1) - (X2, Y2), ColorMask, b
     case clv_flag_bf
-        line clv_buffer(PageIndex, 0), (X1, Y1) - (X2, Y2), TransparencyMask, bf
-        line clv_buffer(PageIndex, 1), (X1, Y1) - (X2, Y2), ColorMask, bf
+        line clv_buffer(PageIndex, clv_buffer_and), (X1, Y1) - (X2, Y2), TransparencyMask, bf
+        line clv_buffer(PageIndex, clv_buffer_or), (X1, Y1) - (X2, Y2), ColorMask, bf
     end select
 end sub
 
 sub clv_draw_circle(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X1 as double, Y1 as double, X2 as double, Y2 as double, A1 as double, A2 as double, R1 as double, R2 as double, ColorMask_inner as ulong, ColorMask_outer as ulong, ColorMask_clockwise as ulong, ColorMask_counterclockwise as ulong, TransparencyMask as ulong)
     dim as fb.image ptr ColorGraphic, TransparencyGraphic
-    ColorGraphic = imagecreate(clv_buffer(PageIndex, 0) -> width, clv_buffer(PageIndex, 0) -> height)
-    TransparencyGraphic = imagecreate(clv_buffer(PageIndex, 1) -> width, clv_buffer(PageIndex, 1) -> height)
+    ColorGraphic = imagecreate(clv_buffer(PageIndex, clv_buffer_and) -> width, clv_buffer(PageIndex, clv_buffer_and) -> height)
+    TransparencyGraphic = imagecreate(clv_buffer(PageIndex, clv_buffer_or) -> width, clv_buffer(PageIndex, clv_buffer_or) -> height)
     clv_draw_primitive_circle ColorGraphic, X1, Y1, X2, Y2, A1, A2, R1, R2, ColorMask_inner, ColorMask_outer, ColorMask_clockwise, ColorMask_counterclockwise
     clv_draw_primitive_circle TransparencyGraphic, X1, Y1, X2, Y2, A1, A2, R1, R2, TransparencyMask, TransparencyMask, TransparencyMask, TransparencyMask
     clv_draw_image clv_buffer(), PageIndex, X1, Y1, ColorGraphic, TransparencyGraphic
@@ -176,21 +177,27 @@ sub clv_draw_circle(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X
 end sub
 
 sub clv_draw_pixel(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X as integer, Y as integer, ColorMask as ulong, TransparencyMask as ulong)
-    pset clv_buffer(PageIndex, 0), (X, Y), TransparencyMask
-    pset clv_buffer(PageIndex, 1), (X, Y), ColorMask
+    pset clv_buffer(PageIndex, clv_buffer_and), (X, Y), TransparencyMask
+    pset clv_buffer(PageIndex, clv_buffer_or), (X, Y), ColorMask
 end sub
 
 sub clv_draw_image(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X as integer, Y as integer, ColorGraphic as fb.image ptr, TransparencyGraphic as fb.image ptr)
     'transparency layer
-    put clv_buffer(PageIndex, 0), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, clv_flag_and
+    put clv_buffer(PageIndex, clv_buffer_and), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, clv_flag_and
     'color layer
-    put clv_buffer(PageIndex, 1), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, clv_flag_and
-    put clv_buffer(PageIndex, 1), (X, Y), ColorGraphic, custom, @clv_filter_mask, clv_flag_or
+    put clv_buffer(PageIndex, clv_buffer_or), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, clv_flag_and
+    put clv_buffer(PageIndex, clv_buffer_or), (X, Y), ColorGraphic, custom, @clv_filter_mask, clv_flag_or
 end sub
 
 function clv_filter_mask( byval SRC as ulong, byval DST as ulong, byval PARM as any ptr) as ulong   
     dim as ulong ptr parm32 = cast(ulong ptr, PARM)
-    clv_filter_mask = ((SRC and DST) and not(parm32 xor clv_flag_and)) or ((SRC or DST) and not(parm32 xor clv_flag_or))
+    '[!]old'clv_filter_mask = ((SRC and DST) and not(parm32 xor clv_flag_and)) or ((SRC or DST) and not(parm32 xor clv_flag_or))
+	select case parm32
+	case clv_flag_and
+		clv_filter_mask = SRC and DST
+	case clv_flag_or
+		clv_filter_mask = SRC or DST
+	end select
 end function
 
 sub clv_draw_primitive_circle(Buffer as fb.image ptr, X1 as double, Y1 as double, X2 as double, Y2 as double, A1 as double, A2 as double, R1 as double, R2 as double, argb32_inner as ulong, argb32_outer as ulong, argb32_clockwise as ulong, argb32_counterclockwise as ulong)
