@@ -19,7 +19,7 @@ ScreenSet 1, 0
 	    
 	const clv_math_Pi = 4 * ATN(1)
 	'[..]'const clv_math_Pi = 3.141592653589793#
-    const clv_flag_and=0, clv_flag_or=1
+    dim shared as const ulong clv_flag_and=0, clv_flag_or=1
     const clv_buffer_and=0, clv_buffer_or=1
     const clv_buffer_visible=0, clv_buffer_draw=1
     const clv_flag_default=0, clv_flag_b=1, clv_flag_bf=2
@@ -130,10 +130,10 @@ end sub
 
 sub clv_buffer_overlay(clv_buffer(any,any) as fb.image ptr, SrcIndex as integer, DestIndex as integer)
     'transparency layer
-    put clv_buffer(DestIndex, clv_buffer_and), (0, 0), clv_buffer(SrcIndex, clv_buffer_and), custom, @clv_filter_mask, clv_flag_and
+    put clv_buffer(DestIndex, clv_buffer_and), (0, 0), clv_buffer(SrcIndex, clv_buffer_and), custom, @clv_filter_mask,  cast( any ptr, @clv_flag_and )
     'color layer
-    put clv_buffer(DestIndex, clv_buffer_or), (0, 0), clv_buffer(SrcIndex, clv_buffer_and), custom, @clv_filter_mask, clv_flag_and
-    put clv_buffer(DestIndex, clv_buffer_or), (0, 0), clv_buffer(SrcIndex, clv_buffer_or), custom, @clv_filter_mask, clv_flag_or
+    put clv_buffer(DestIndex, clv_buffer_or), (0, 0), clv_buffer(SrcIndex, clv_buffer_and), custom, @clv_filter_mask,  cast( any ptr, @clv_flag_and )
+    put clv_buffer(DestIndex, clv_buffer_or), (0, 0), clv_buffer(SrcIndex, clv_buffer_or), custom, @clv_filter_mask,  cast( any ptr, @clv_flag_or )
 end sub
 
 sub clv_buffer_flip(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, Display_Width as integer, Display_Height as integer)
@@ -183,16 +183,17 @@ end sub
 
 sub clv_draw_image(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X as integer, Y as integer, ColorGraphic as fb.image ptr, TransparencyGraphic as fb.image ptr)
     'transparency layer
-    put clv_buffer(PageIndex, clv_buffer_and), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, clv_flag_and
+    put clv_buffer(PageIndex, clv_buffer_and), (X, Y), TransparencyGraphic, custom, @clv_filter_mask,  cast( any ptr, @clv_flag_and )
     'color layer
-    put clv_buffer(PageIndex, clv_buffer_or), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, clv_flag_and
-    put clv_buffer(PageIndex, clv_buffer_or), (X, Y), ColorGraphic, custom, @clv_filter_mask, clv_flag_or
+    put clv_buffer(PageIndex, clv_buffer_or), (X, Y), TransparencyGraphic, custom, @clv_filter_mask, cast( any ptr, @clv_flag_and )
+    put clv_buffer(PageIndex, clv_buffer_or), (X, Y), ColorGraphic, custom, @clv_filter_mask, cast( any ptr, @clv_flag_or )
+
 end sub
 
 function clv_filter_mask( byval SRC as ulong, byval DST as ulong, byval PARM as any ptr) as ulong   
-    dim as ulong ptr parm32 = cast(ulong ptr, PARM)
-    '[!]old'clv_filter_mask = ((SRC and DST) and not(parm32 xor clv_flag_and)) or ((SRC or DST) and not(parm32 xor clv_flag_or))
-	select case parm32
+	
+	dim as ulong ptr parm32 = cast(ulong ptr, PARM)
+    select case parm32
 	case clv_flag_and
 		clv_filter_mask = SRC and DST
 	case clv_flag_or

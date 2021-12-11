@@ -17,7 +17,7 @@
 	
 	const clv_math_Pi = 4 * ATN(1)
 	'[..]'const clv_math_Pi = 3.141592653589793#
-    const clv_flag_and=0, clv_flag_or=1
+    dim shared as const ulong clv_flag_and=0, clv_flag_or=1
     const clv_buffer_and=0, clv_buffer_or=1
     const clv_buffer_visible=0, clv_buffer_draw=1
     const clv_flag_default=0, clv_flag_b=1, clv_flag_bf=2
