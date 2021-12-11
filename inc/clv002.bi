@@ -41,21 +41,21 @@
     
 	declare sub clv_buffer_flip(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, Display_Width as integer, Display_Height as integer)
     
-	declare sub clv_draw_line(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X1 as integer, Y1 as integer, X2 as integer, Y2 as integer, ColorMask as uinteger, TransparencyMask as uinteger, Gfx_Method as integer)
+	declare sub clv_draw_line(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X1 as integer, Y1 as integer, X2 as integer, Y2 as integer, ColorMask as ulong, TransparencyMask as ulong, Gfx_Method as integer)
     
-	declare sub clv_draw_pixel(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X as integer, Y as integer, ColorMask as uinteger, TransparencyMask as uinteger)
+	declare sub clv_draw_pixel(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X as integer, Y as integer, ColorMask as ulong, TransparencyMask as ulong)
     
 	declare sub clv_draw_image(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X as integer, Y as integer, ColorGraphic as fb.image ptr, TransparencyGraphic as fb.image ptr)
     
-	declare function clv_filter_mask (SRC as uinteger, DST as uinteger, PARM as any ptr) as uinteger   
+	declare function clv_filter_mask( byval SRC as ulong, byval DST as ulong, byval PARM as any ptr) as ulong   
     
-	declare sub clv_draw_primitive_circle(Buffer as fb.image ptr, X1 as double, Y1 as double, X2 as double, Y2 as double, A1 as double, A2 as double, R1 as double, R2 as double, argb32_inner as uinteger, argb32_outer as uinteger, argb32_clockwise as uinteger, argb32_counterclockwise as uinteger)
+	declare sub clv_draw_primitive_circle(Buffer as fb.image ptr, X1 as double, Y1 as double, X2 as double, Y2 as double, A1 as double, A2 as double, R1 as double, R2 as double, argb32_inner as ulong, argb32_outer as ulong, argb32_clockwise as ulong, argb32_counterclockwise as ulong)
     
-	declare sub clv_draw_primitive_triangle(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X1 as double, Y1 as double, X2 as double, Y2 as double, X3 as double, Y3 as double, ColorMask as uinteger, TransparencyMask as uinteger, Center_X as double, Center_Y as double)
+	declare sub clv_draw_primitive_triangle(clv_buffer(any,any) as fb.image ptr, PageIndex as integer, X1 as double, Y1 as double, X2 as double, Y2 as double, X3 as double, Y3 as double, ColorMask as ulong, TransparencyMask as ulong, Center_X as double, Center_Y as double)
     
 	declare function clv_math_vector2decimal (X1 as double, Y1 as double, X2 as double, Y2 as double) as double
     
-	declare function clv_argb32_mix(argb32(any) as uinteger, weight(any) as double) as uinteger
+	declare function clv_argb32_mix(argb32(any) as ulong, weight(any) as double) as ulong
     
 	redim shared as integer clv_glyph(&H00 to &HFF, 0 to 1)
     redim shared as fb.image ptr clv_font(&H00 to &HFF), clv_buffer(0 to 15, 0 to 1)
