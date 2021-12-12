@@ -1,0 +1,6 @@
+
+C:\ag\CLV>del "compile-win32.log" 
+
+C:\ag\CLV>"C:\Program Files (x86)\FreeBASIC\fbc32.exe" "clv.bas" -lib  1>>"compile-win32.log" 
+
+C:\ag\CLV>exit
